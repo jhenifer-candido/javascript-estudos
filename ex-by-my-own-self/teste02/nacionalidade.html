@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nacionalidade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>
+            Descubra se você é estrangeiro ou brasileiro! &#x1F30E;
+        </h1>
+    </header>
+    <div class="container">
+        <p>
+            Escreva o seu país de nascimento <br>
+            <input type="text" name="question" id="question">
+            <input type="button" value="verificar" onclick="verificar()" class="button">
+        </p>
+        <div id="res"></div>
+    </div>
+    <script>
+        async function verificar() {
+            var quest = document.getElementById('question');
+            var res = document.getElementById('res');
+            var paisn = quest.value.toLowerCase().trim();
+
+            console.log("País inserido:", paisn); // Log do país inserido
+
+            try {
+                // Faz uma requisição para a API REST Countries para obter a lista de todos os países
+                const response = await fetch('https://restcountries.com/v3.1/all');
+                const countries = await response.json();
+
+                // Verifica o retorno da API
+                console.log("Dados recebidos da API:", countries); 
+
+                // Extrai os nomes dos países e converte para minúsculas
+                var paisesValidos = countries.map(pais => pais.name.common.toLowerCase());
+
+                console.log("Lista de países válidos:", paisesValidos); // Log da lista de países válidos
+
+                res.innerHTML = `Você nasceu em: <strong>${quest.value}</strong> <br>`;
+
+                if (paisesValidos.includes(paisn)) {
+                    console.log("País encontrado na lista válida."); // Confirmação de que o país está na lista válida
+                    if (paisn === "brazil") {
+                        res.innerHTML += 'Uhul! Você é brasileiro!';
+                    } else {
+                        res.innerHTML += 'Você não é brasileiro, mas sim estrangeiro.';
+                    }
+                } else {
+                    console.log("País não encontrado na lista válida."); // Confirmação de que o país não está na lista válida
+                    res.innerHTML += 'Esse país não existe.';
+                }
+            } catch (error) {
+                console.error("Erro ao obter a lista de países:", error);
+                res.innerHTML = 'Erro ao verificar a lista de países. Tente novamente mais tarde.';
+            }
+        }
+    </script>
+</body>
+</html>
